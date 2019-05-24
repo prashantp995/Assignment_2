@@ -1,5 +1,6 @@
 (ns main)
 (use 'clojure.java.io)
-(with-open [rdr (reader "map.txt")]
-  (doseq [line (line-seq rdr)]
-    (println line)))
+(with-open [read (reader "map.txt")]
+  (doseq [line (line-seq read)]
+    (if (re-find #"@" line) (print line)))
+  )
