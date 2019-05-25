@@ -7,10 +7,33 @@
 (def myVec [])
 (def row 0)
 (def column 0)
-(defn ppri2nt [the-array]
-  (doseq [a the-array]
-    (print a)
-    ))
+(def temp_column 0)
+(def temp_row 0)
+(def temp_row_counter 0)
+(def temp_column_counter 0)
+
+(defn iterateOver [row column the-array]
+
+  (while (< temp_row_counter row)
+    (def temp_column_counter 0)
+    (println)
+    (while (< temp_column_counter column)
+      (print (aget the-array temp_row_counter temp_column_counter))
+      (def temp_column_counter (+ temp_column_counter 1)))
+    (def temp_row_counter (+ temp_row_counter 1))))
+(defn addInToArray [row column]
+  (let [the-array (make-array Character/TYPE row column)]
+    (with-open [rdr (reader "map.txt")]
+      (doseq [line (line-seq rdr)]
+        (def temp_row (+ temp_row 1))
+        (def temp_column 0)
+        (doseq [character line]
+          (def temp_column (+ temp_column 1))
+          (let [ii (- temp_row 1)
+                jj (- temp_column 1)]
+            (aset the-array ii jj character)
+            ))
+        ) (pp/pprint the-array)) (iterateOver row column the-array)))
 
 (defn treasure_hunt []
   (with-open [rdr (reader "map.txt")]
@@ -21,15 +44,7 @@
         (def myVec (alength (to-array-2d [line])))
         (def column (+ column 1))
         (println character)))
-    (let [the-array (make-array Long/TYPE row column)]
-      (dotimes [nn (* row column)]
-        (let [ii (quot nn row)
-              jj (rem nn column)]
-          (aset the-array ii jj nn)
-          ))
-      (pp/pprint the-array)
-      (pp/pprint row)
-      (pp/pprint column)
-      )))
+    (addInToArray row column)
+    ))
 
 (treasure_hunt)
