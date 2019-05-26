@@ -11,14 +11,19 @@
 (def temp_row 0)
 (def temp_row_counter 0)
 (def temp_column_counter 0)
+(def temp_character "")
 
 (defn iterateOver [row column the-array]
-
   (while (< temp_row_counter row)
     (def temp_column_counter 0)
     (println)
     (while (< temp_column_counter column)
       (print (aget the-array temp_row_counter temp_column_counter))
+      (def temp_character (aget the-array temp_row_counter temp_column_counter))
+      (def temp_character (str temp_character))
+      (if (= "@" temp_character)
+        (print "treasure found")
+        )
       (def temp_column_counter (+ temp_column_counter 1)))
     (def temp_row_counter (+ temp_row_counter 1))))
 (defn addInToArray [row column]
@@ -43,7 +48,7 @@
       (doseq [character (str/split line #"")]
         (def myVec (alength (to-array-2d [line])))
         (def column (+ column 1))
-        (println character)))
+        ))
     (addInToArray row column)
     ))
 
