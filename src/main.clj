@@ -3,8 +3,6 @@
   (:require [clojure.pprint :as pp]))
 
 (use 'clojure.java.io)
-(def user)
-(def myVec [])
 (def row 0)
 (def column 0)
 (def total_row 0)
@@ -13,14 +11,12 @@
 (def temp_row 0)
 (def temp_row_counter 0)
 (def temp_column_counter 0)
-(def temp_character "")
-(def next_char "")
-(def temp_next_counter_row 0)
-(def temp_next_counter_column 0)
+(def previous_column_counter 0)
 (def solution_row 0)
 (def solution_column 0)
-(def the-array)
+(def maze-array)
 (def solution_found false)
+(def valid_map true)
 
 
 (defn print-maze-to-output [the-array]
@@ -43,8 +39,7 @@
   (if (and (= y solution_column) (= x solution_row))
     (do
       (println "I found the treasure")
-      (print-maze-to-output the-array)                      ;; TODO : write the code to print the "the-array" in this line
-      ;(System/exit 1)
+      (print-maze-to-output the-array)
       (def solution_found true)
       )
     )
@@ -55,17 +50,13 @@
       (maze-solution (- x 1) y the-array)                   ;;up direction
       (maze-solution x (+ y 1) the-array)                   ;;right direction
       (maze-solution x (- y 1) the-array)                   ;;left direction
-
-
       (aset the-array x y \!)
       false
       )
     )
   )
 
-(defn iterateOver [row column the-array]
-  ;; (println (aget the-array 1 2))
-  ;;(print-maze-to-output the-array)
+(defn iterateOver [the-array]
   (if (and (= false (maze-solution 0 0 the-array)) (= false solution_found))
     (do (println "No treasure found")
         (print-maze-to-output the-array))
@@ -73,7 +64,7 @@
     )
   )
 (defn addInToArray [row column]
-  (def the-array (make-array Character/TYPE row column))
+  (def maze-array (make-array Character/TYPE row column))
   (with-open [rdr (reader "map.txt")]
     (doseq [line (line-seq rdr)]
       (def temp_row (+ temp_row 1))
@@ -88,7 +79,7 @@
               (def solution_column jj)
               )
             )
-          (aset the-array ii jj character)))
+          (aset maze-array ii jj character)))
       )))
 
 (defn treasure_hunt []
@@ -97,18 +88,24 @@
       (def row (+ row 1))
       (def column 0)
       (doseq [character (str/split line #"")]
-        (def myVec (alength (to-array-2d [line])))
         (def column (+ column 1))
-        ))
+        )
+      (if (= row 1)
+        (def previous_column_counter column))
+      (if (and (not= previous_column_counter column) (not= row 1) (not= false valid_map))
+        (do (print "number of columns mismatch  map is not valid")
+            (def valid_map false))
+        )
+      )
 
     )
+  (if (= true valid_map)
+    (do (addInToArray row column)
+        (def total_row row)
+        (def total_column column)
+        (iterateOver maze-array))
 
-  (addInToArray row column)
-  (def total_row row)
-  (def total_column column)
-  (iterateOver 0 0 the-array)
-
-  )
+    ))
 
 
 (treasure_hunt)
