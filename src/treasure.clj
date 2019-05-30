@@ -12,8 +12,8 @@
 (def temp_row_counter 0)
 (def temp_column_counter 0)
 (def previous_column_counter 0)
-(def solution_row 0)
-(def solution_column 0)
+(def treasure_row_index)
+(def treasure_column_index)
 (def start_position_row 0)
 (def start_position_column 0)
 (def maze-array)
@@ -66,7 +66,7 @@
   )
 
 (defn explore-tunnel [x y input-array]
-  (if (and (= y solution_column) (= x solution_row))
+  (if (and (= y treasure_column_index) (= x treasure_row_index))
     (do
       (final-result input-array success_message true)
       )
@@ -105,8 +105,8 @@
               column_index (- temp_column 1)]
           (if (= treasure_char character)
             (do
-              (def solution_row row_index)
-              (def solution_column column_index)
+              (def treasure_row_index row_index)
+              (def treasure_column_index column_index)
               )
             )
           (aset maze-array row_index column_index character)))
@@ -124,6 +124,7 @@
         )
       (if (= row 1)
         (def previous_column_counter column))
+      ;validation for number of column mismatch for given row
       (if (and (not= previous_column_counter column) (not= row 1) (not= false valid_map))
         (do (print invalid_map_message)
             (def valid_map false))
@@ -131,6 +132,7 @@
       )
 
     )
+  ;validation for empty map
   (if (= row 0)
     (do
       (def valid_map false)
