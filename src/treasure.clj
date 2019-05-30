@@ -23,6 +23,8 @@
 (def success_step \+)
 (def treasure_char \@)
 (def unexplored_step \-)
+(def wall \#)
+(def wall_at_start_message "Wall Found at starting position, can not go further,No Treasure found")
 (def success_message "Treasure Found")
 (def failure_message "Uh oh Treasure Not Found")
 (def invalid_map_message "Number of columns mismatch  Map is not valid")
@@ -47,15 +49,15 @@
     (def temp_row_counter (+ temp_row_counter 1)))
   )
 
-(defn is_valid_position [x y]
-  (if (and (>= x 0) (< x total_row) (>= y 0) (< y total_column))
+(defn is_valid_position [current_row_index current_column_index]
+  (if (and (>= current_row_index 0) (< current_row_index total_row) (>= current_column_index 0) (< current_column_index total_column))
     true
     )
   )
 
-(defn is_valid_move [input-array x y]
+(defn is_valid_move [input-array current_row_index current_column_index]
   ;allow to go further with valid positions ,character and solution is not found yet.
-  (if (and (is_valid_position x y) (= unexplored_step (aget input-array x y)) (= false solution_found))
+  (if (and (is_valid_position current_row_index current_column_index) (= unexplored_step (aget input-array current_row_index current_column_index)) (= false solution_found))
     true
     ))
 
@@ -65,29 +67,32 @@
   (print-final-output-array the-array)
   )
 
-(defn explore-tunnel [x y input-array]
-  (if (and (= y treasure_column_index) (= x treasure_row_index))
+(defn explore-tunnel [current_row_index current_column_index input-array]
+  (if (and (= current_row_index treasure_row_index) (= current_column_index treasure_column_index))
     (do
       (final-result input-array success_message true)
       )
     )
-  (if (= true (is_valid_move input-array x y))
+  (if (= true (is_valid_move input-array current_row_index current_column_index))
     (do
-      (aset input-array x y success_step)
-      (explore-tunnel (+ x 1) y input-array)                ;;down direction
-      (explore-tunnel (- x 1) y input-array)                ;;up direction
-      (explore-tunnel x (+ y 1) input-array)                ;;right direction
-      (explore-tunnel x (- y 1) input-array)                ;;left direction
-      (aset input-array x y failed_step)                    ;; if can not make it to any direction it is failed step
+      (aset input-array current_row_index current_column_index success_step)
+      (explore-tunnel (+ current_row_index 1) current_column_index input-array) ;;down direction
+      (explore-tunnel (- current_row_index 1) current_column_index input-array) ;;up direction
+      (explore-tunnel current_row_index (+ current_column_index 1) input-array) ;;right direction
+      (explore-tunnel current_row_index (- current_column_index 1) input-array) ;;left direction
+      (aset input-array current_row_index current_column_index failed_step) ;; if can not make it to any direction it is failed step
       false
       )
     )
   )
 
-(defn iterateOver [the-array]
-  (if (and (= false (explore-tunnel start_position_row start_position_column the-array)) (= false solution_found))
+(defn iterateOver [input-array]
+  (if (= wall (aget input-array start_position_row start_position_column))
+    (do (final-result input-array wall_at_start_message false))
+    )
+  (if (and (= false (explore-tunnel start_position_row start_position_column input-array)) (= false solution_found))
     (do
-      (final-result the-array failure_message false)
+      (final-result input-array failure_message false)
       )
 
     )
