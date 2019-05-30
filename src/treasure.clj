@@ -1,4 +1,4 @@
-(ns main
+(ns treasure
   (:require [clojure.string :as str])
   (:require [clojure.pprint :as pp]))
 
@@ -22,7 +22,7 @@
 (def treasure_char \@)
 (def unexplored_step \-)
 (def success_message "Treasure Found")
-(def failure_message "Treasure Not Found")
+(def failure_message "Uh oh Treasure Not Found")
 (def invalid_map_message "Number of columns mismatch  Map is not valid")
 (def empty_map_message "Empty Map Found")
 
