@@ -27,6 +27,7 @@
 (def failure_message "Uh oh Treasure Not Found")
 (def invalid_map_message "Number of columns mismatch  Map is not valid")
 (def empty_map_message "Empty Map Found")
+(def map_file "map.txt")                                    ;modify if map file with other name require
 
 ; Reference : https://en.wikipedia.org/wiki/Backtracking
 ; Reference : https://www.geeksforgeeks.org/rat-in-a-maze-backtracking-2/
@@ -36,12 +37,12 @@
 ; Reference :https://purelyfunctional.tv/guide/clojure-collections/
 ; Reference :https://aphyr.com/posts/303-clojure-from-the-ground-up-functions
 
-(defn print-final-output-array [the-array]
+(defn print-final-output-array [array-to-print]
   (while (< temp_row_counter row)
     (def temp_column_counter 0)
     (println)                                               ;printing of one row completed
     (while (< temp_column_counter column)
-      (print (aget the-array temp_row_counter temp_column_counter))
+      (print (aget array-to-print temp_row_counter temp_column_counter))
       (def temp_column_counter (+ temp_column_counter 1)))
     (def temp_row_counter (+ temp_row_counter 1)))
   )
@@ -53,6 +54,7 @@
   )
 
 (defn is_valid_move [input-array x y]
+  ;allow to go further with valid positions ,character and solution is not found yet.
   (if (and (validate_position x y) (= unexplored_step (aget input-array x y)) (= false solution_found))
     true
     ))
@@ -91,8 +93,9 @@
     )
   )
 (defn addInToArray [row column]
+  ;at this point number of row and column is known, this method populate array with the values
   (def maze-array (make-array Character/TYPE row column))
-  (with-open [rdr (reader "map.txt")]
+  (with-open [rdr (reader map_file)]
     (doseq [line (line-seq rdr)]
       (def temp_row (+ temp_row 1))
       (def temp_column 0)
@@ -110,7 +113,8 @@
       )))
 
 (defn treasure_hunt []
-  (with-open [rdr (reader "map.txt")]
+  ; this method calculates number of rows and column and validate the map
+  (with-open [rdr (reader map_file)]
     (doseq [line (line-seq rdr)]
       (def row (+ row 1))
       (def column 0)
