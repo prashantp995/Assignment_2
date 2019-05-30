@@ -17,6 +17,11 @@
 (def maze-array)
 (def solution_found false)
 (def valid_map true)
+(def failed_step \!)
+(def success_step \+)
+(def treasure_char \@)
+(def unexplored_step \-)
+
 
 
 (defn print-maze-to-output [the-array]
@@ -31,35 +36,40 @@
   )
 
 (defn valid_move [the-array x y]
-  (if (and (>= x 0) (< x total_row) (>= y 0) (< y total_column) (= (char (first (.getBytes "-"))) (aget the-array x y)) (= false solution_found))
+  (if (and (>= x 0) (< x total_row) (>= y 0) (< y total_column) (= unexplored_step (aget the-array x y)) (= false solution_found))
     true
     ))
 
-(defn maze-solution [x y the-array]
+(defn final-result [the-array msg sol_found]
+  (println msg)
+  (print-maze-to-output the-array)
+  (def solution_found sol_found)
+  )
+
+(defn explore-tunnel [x y the-array]
   (if (and (= y solution_column) (= x solution_row))
     (do
-      (println "I found the treasure")
-      (print-maze-to-output the-array)
-      (def solution_found true)
+      (final-result the-array "Treasure Found" true)
       )
     )
   (if (= true (valid_move the-array x y))
     (do
-      (aset the-array x y \+)
-      (maze-solution (+ x 1) y the-array)                   ;;down direction
-      (maze-solution (- x 1) y the-array)                   ;;up direction
-      (maze-solution x (+ y 1) the-array)                   ;;right direction
-      (maze-solution x (- y 1) the-array)                   ;;left direction
-      (aset the-array x y \!)
+      (aset the-array x y success_step)
+      (explore-tunnel (+ x 1) y the-array)                  ;;down direction
+      (explore-tunnel (- x 1) y the-array)                  ;;up direction
+      (explore-tunnel x (+ y 1) the-array)                  ;;right direction
+      (explore-tunnel x (- y 1) the-array)                  ;;left direction
+      (aset the-array x y failed_step)                      ;; if can not make it to any direction it is failed step
       false
       )
     )
   )
 
 (defn iterateOver [the-array]
-  (if (and (= false (maze-solution 0 0 the-array)) (= false solution_found))
-    (do (println "No treasure found")
-        (print-maze-to-output the-array))
+  (if (and (= false (explore-tunnel 0 0 the-array)) (= false solution_found))
+    (do
+      (final-result the-array "Treasure Not Found" false)
+      )
 
     )
   )
@@ -73,7 +83,7 @@
         (def temp_column (+ temp_column 1))
         (let [ii (- temp_row 1)
               jj (- temp_column 1)]
-          (if (= (char (first (.getBytes "@"))) character)
+          (if (= treasure_char character)
             (do
               (def solution_row ii)
               (def solution_column jj)
@@ -87,7 +97,8 @@
     (doseq [line (line-seq rdr)]
       (def row (+ row 1))
       (def column 0)
-      (doseq [character (str/split line #"")]
+      (doseq [temp_character (str/split line #"")]
+        ;(print temp_character)
         (def column (+ column 1))
         )
       (if (= row 1)
