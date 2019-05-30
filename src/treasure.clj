@@ -47,7 +47,7 @@
     (def temp_row_counter (+ temp_row_counter 1)))
   )
 
-(defn validate_position [x y]
+(defn is_valid_position [x y]
   (if (and (>= x 0) (< x total_row) (>= y 0) (< y total_column))
     true
     )
@@ -55,7 +55,7 @@
 
 (defn is_valid_move [input-array x y]
   ;allow to go further with valid positions ,character and solution is not found yet.
-  (if (and (validate_position x y) (= unexplored_step (aget input-array x y)) (= false solution_found))
+  (if (and (is_valid_position x y) (= unexplored_step (aget input-array x y)) (= false solution_found))
     true
     ))
 
