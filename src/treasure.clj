@@ -1,6 +1,6 @@
 (ns treasure
   (:require [clojure.string :as str])
-  (:require [clojure.pprint :as pp]))
+  )
 
 (use 'clojure.java.io)
 (def row 0)
@@ -14,6 +14,8 @@
 (def previous_column_counter 0)
 (def solution_row 0)
 (def solution_column 0)
+(def start_position_row 0)
+(def start_position_column 0)
 (def maze-array)
 (def solution_found false)
 (def valid_map true)
@@ -81,7 +83,7 @@
   )
 
 (defn iterateOver [the-array]
-  (if (and (= false (explore-tunnel 0 0 the-array)) (= false solution_found))
+  (if (and (= false (explore-tunnel start_position_row start_position_column the-array)) (= false solution_found))
     (do
       (final-result the-array failure_message false)
       )
